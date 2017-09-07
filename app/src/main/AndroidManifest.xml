@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.kcb">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/timetable_114px"
+        android:label="课程表"
+        android:roundIcon="@mipmap/timetable_114px"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="新建课程"
+            android:name=".AddCourseActivity"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+
+        <activity
+            android:name=".AboutActivity"
+            android:label="关于"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
+    </application>
+
+</manifest>

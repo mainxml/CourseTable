@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add_courses"
+        android:icon="@drawable/add"
+        android:title="添加/修改课程"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@drawable/above"
+        android:title="关于"
+        app:showAsAction="always"/>
+</menu>
