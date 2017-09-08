@@ -145,7 +145,7 @@
                     android:layout_marginLeft="1dp"
                     android:layout_marginBottom="1dp"/>
             </LinearLayout>
-
         </LinearLayout>
     </FrameLayout>
+
 </ScrollView>

@@ -92,32 +92,6 @@
                 android:layout_gravity="center"
                 android:imeOptions="actionNext"
                 android:singleLine="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="课程开始时间:"/>
-            <EditText
-                android:id="@+id/class_end"
-                android:layout_width="55dp"
-                android:layout_height="wrap_content"
-                android:inputType="datetime"
-                android:imeOptions="actionNext"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="课程结束时间:"/>
-            <EditText
-                android:id="@+id/class_start"
-                android:layout_width="55dp"
-                android:layout_height="wrap_content"
-                android:inputType="datetime"
-                android:imeOptions="actionDone"
-                android:layout_gravity="center"/>
         </LinearLayout>
     </ScrollView>
 
@@ -136,6 +110,3 @@
         android:text="\n 在课程表界面长按一个课程可以删除它 \n"/>
 
 </LinearLayout>
-
-
-

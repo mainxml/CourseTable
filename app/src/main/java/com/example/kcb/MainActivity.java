@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //创建课程表左边"节数"的视图
     private void createLeftView(Course course) {
-        //动态生成课程表左侧的节数视图
         int len = course.getEnd();
         if (len > maxClassNumber) {
             LinearLayout classNumberLayout = (LinearLayout) findViewById(R.id.class_number_layout);
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //创建卡片课程视图
     private void createView(final Course course) {
         int integer = course.getDay();
         if ((integer < 1 && integer > 7) || course.getStart() > course.getEnd()) {
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //保存数据
     private void saveData(Course course) {
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("insert into course(course_name, teacher, class_room, day, start, end) " +
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
     }
 
+    //加载数据
     private void loadData() {
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
