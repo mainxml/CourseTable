@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!--背景图-->
         <ImageView
             android:id="@+id/bg"
             android:layout_width="match_parent"
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--工具条-->
+            <!--Toolbar-->
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -29,7 +30,7 @@
                 android:background="#7fab96c5"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/AlertDialog.AppCompat.Light"/>
-            <!--周-->
+            <!--星期条-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
@@ -88,11 +89,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!--左侧"节数"布局-->
                 <LinearLayout
                     android:id="@+id/class_number_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"/>
+                <!--星期一到星期天的布局-->
                 <RelativeLayout
                     android:id="@+id/monday"
                     android:layout_width="0dp"
@@ -145,7 +148,9 @@
                     android:layout_marginLeft="1dp"
                     android:layout_marginBottom="1dp"/>
             </LinearLayout>
+
         </LinearLayout>
+
     </FrameLayout>
 
 </ScrollView>

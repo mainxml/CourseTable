@@ -20,12 +20,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int maxClassNumber = 0;//课程表左侧的最大节数
-    private int number = 1; //课程表左侧的当前节数
-    private Toolbar toolbar; //工具条
-    private RelativeLayout day = null; //星期几
-    private DatabaseHelper databaseHelper = new DatabaseHelper(this, "database.db", null, 1); //SQLite Helper类
-    private ArrayList<Course> courseList = new ArrayList<>(); //用于程序启动时从数据库加载多个课程对象
+    //星期几
+    private RelativeLayout day;
+    //SQLite Helper类
+    private DatabaseHelper databaseHelper = new DatabaseHelper
+            (this, "database.db", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //工具条
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //从数据库读取数据
@@ -47,21 +46,23 @@ public class MainActivity extends AppCompatActivity {
             //创建课程表左边视图(节数)
             createLeftView(course);
             //创建课程表视图
-            createView(course);
+            createCourseView(course);
             //存储数据到数据库
             saveData(course);
         }
     }
 
-    //创建课程表左边"节数"的视图
+    //创建课程节数的卡片视图
     private void createLeftView(Course course) {
+        int maxClassNumber = 0;//课程的最大节数
+        int number = 1; //课程表左侧的当前节数
         int len = course.getEnd();
         if (len > maxClassNumber) {
             LinearLayout classNumberLayout = (LinearLayout) findViewById(R.id.class_number_layout);
             View view;
             TextView text;
             for (int i = 0; i < len-maxClassNumber; i++) {
-                view = LayoutInflater.from(this).inflate(R.layout.class_number, null);
+                view = LayoutInflater.from(this).inflate(R.layout.left_view, null);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110,180);
                 view.setLayoutParams(params);
                 text = view.findViewById(R.id.class_number_text);
@@ -72,12 +73,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //创建卡片课程视图
-    private void createView(final Course course) {
+    //创建课程的卡片视图
+    private void createCourseView(final Course course) {
+        int height = 180;
         int integer = course.getDay();
-        if ((integer < 1 && integer > 7) || course.getStart() > course.getEnd()) {
+        if ((integer < 1 && integer > 7) || course.getStart() > course.getEnd())
             Toast.makeText(this, "星期几没写对,或课程结束时间比开始时间还早~~", Toast.LENGTH_LONG).show();
-        } else {
+        else {
             switch (integer) {
                 case 1: day = (RelativeLayout) findViewById(R.id.monday);break;
                 case 2: day = (RelativeLayout) findViewById(R.id.tuesday);break;
@@ -88,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
                 case 7: day = (RelativeLayout) findViewById(R.id.weekday);break;
             }
             final View view = LayoutInflater.from(this).inflate(R.layout.course_card, null); //加载单个课程布局
-            view.setY(180 * (course.getStart()-1)); //设置开始高度,即第几节课开始
+            view.setY(height * (course.getStart()-1)); //设置开始高度,即第几节课开始
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
-                    (ViewGroup.LayoutParams.MATCH_PARENT,(course.getEnd()-course.getStart()+1)*180-2); //设置布局高度,即跨多少节课
+                    (ViewGroup.LayoutParams.MATCH_PARENT,(course.getEnd()-course.getStart()+1)*height - 8); //设置布局高度,即跨多少节课
             view.setLayoutParams(params);
             TextView text = view.findViewById(R.id.text_view);
             text.setText(course.getCourseName() + "\n" + course.getTeacher() + "\n" + course.getClassRoom()); //显示课程名
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //保存数据
+    //保存数据到数据库
     private void saveData(Course course) {
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("insert into course(course_name, teacher, class_room, day, start, end) " +
@@ -117,8 +119,9 @@ public class MainActivity extends AppCompatActivity {
                 course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
     }
 
-    //加载数据
+    //从数据库加载数据
     private void loadData() {
+        ArrayList<Course> courseList = new ArrayList<>(); //课程列表
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
         if (cursor.moveToFirst()) {
@@ -134,10 +137,10 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        //根据从数据库读取的数据加载课程表视图
+        //使用从数据库读取出来的课程信息来加载课程表视图
         for (Course course : courseList) {
             createLeftView(course);
-            createView(course);
+            createCourseView(course);
         }
     }
 
