@@ -6,10 +6,10 @@
         android:id="@+id/add_courses"
         android:icon="@drawable/add"
         android:title="添加/修改课程"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_about"
         android:icon="@drawable/above"
         android:title="关于"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 </menu>

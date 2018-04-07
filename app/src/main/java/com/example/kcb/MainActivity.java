@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
 
     //星期几
     private RelativeLayout day;
+
     //SQLite Helper类
     private DatabaseHelper databaseHelper = new DatabaseHelper
             (this, "database.db", null, 1);
+
+    int currentCoursesNumber = 0;
+    int maxCoursesNumber = 0; //课程的最大节数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,41 +44,58 @@ public class MainActivity extends AppCompatActivity {
         loadData();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0 && resultCode == 0 && data != null) {
-            Course course = (Course) data.getSerializableExtra("course");
-            //创建课程表左边视图(节数)
+    //从数据库加载数据
+    private void loadData() {
+        ArrayList<Course> courseList = new ArrayList<>(); //课程列表
+        SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from courses", null);
+        if (cursor.moveToFirst()) {
+            do {
+                courseList.add(new Course(
+                        cursor.getString(cursor.getColumnIndex("course_name")),
+                        cursor.getString(cursor.getColumnIndex("teacher")),
+                        cursor.getString(cursor.getColumnIndex("class_room")),
+                        cursor.getInt(cursor.getColumnIndex("day")),
+                        cursor.getInt(cursor.getColumnIndex("start")),
+                        cursor.getInt(cursor.getColumnIndex("end"))));
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+
+        //使用从数据库读取出来的课程信息来加载课程表视图
+        for (Course course : courseList) {
             createLeftView(course);
-            //创建课程表视图
             createCourseView(course);
-            //存储数据到数据库
-            saveData(course);
         }
     }
 
-    //创建课程节数的卡片视图
+    //保存数据到数据库
+    private void saveData(Course course) {
+        SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
+        sqLiteDatabase.execSQL("insert into courses(course_name, teacher, class_room, day, start, end) " +
+                "values(?, ?, ?, ?, ?, ?)", new String[] {course.getCourseName(), course.getTeacher(),
+                course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
+    }
+
+    //创建课程节数视图
     private void createLeftView(Course course) {
-        int maxClassNumber = 0;//课程的最大节数
-        int number = 1; //课程表左侧的当前节数
         int len = course.getEnd();
-        if (len > maxClassNumber) {
-            LinearLayout classNumberLayout = (LinearLayout) findViewById(R.id.class_number_layout);
-            View view;
-            TextView text;
-            for (int i = 0; i < len-maxClassNumber; i++) {
-                view = LayoutInflater.from(this).inflate(R.layout.left_view, null);
+        if (len > maxCoursesNumber) {
+            for (int i = 0; i < len-maxCoursesNumber; i++) {
+                View view = LayoutInflater.from(this).inflate(R.layout.left_view, null);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110,180);
                 view.setLayoutParams(params);
-                text = view.findViewById(R.id.class_number_text);
-                text.setText("" + number++);
+                TextView text = view.findViewById(R.id.class_number_text);
+                text.setText(String.valueOf(++currentCoursesNumber));
+
+                LinearLayout classNumberLayout = findViewById(R.id.class_number_layout);
                 classNumberLayout.addView(view);
             }
-            maxClassNumber = len;
+            maxCoursesNumber = len;
         }
     }
 
-    //创建课程的卡片视图
+    //创建课程视图
     private void createCourseView(final Course course) {
         int height = 180;
         int integer = course.getDay();
@@ -81,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "星期几没写对,或课程结束时间比开始时间还早~~", Toast.LENGTH_LONG).show();
         else {
             switch (integer) {
-                case 1: day = (RelativeLayout) findViewById(R.id.monday);break;
-                case 2: day = (RelativeLayout) findViewById(R.id.tuesday);break;
-                case 3: day = (RelativeLayout) findViewById(R.id.wednesday);break;
-                case 4: day = (RelativeLayout) findViewById(R.id.thursday);break;
-                case 5: day = (RelativeLayout) findViewById(R.id.friday);break;
-                case 6: day = (RelativeLayout) findViewById(R.id.saturday);break;
-                case 7: day = (RelativeLayout) findViewById(R.id.weekday);break;
+                case 1: day = findViewById(R.id.monday);break;
+                case 2: day = findViewById(R.id.tuesday);break;
+                case 3: day = findViewById(R.id.wednesday);break;
+                case 4: day = findViewById(R.id.thursday);break;
+                case 5: day = findViewById(R.id.friday);break;
+                case 6: day = findViewById(R.id.saturday);break;
+                case 7: day = findViewById(R.id.weekday);break;
             }
             final View view = LayoutInflater.from(this).inflate(R.layout.course_card, null); //加载单个课程布局
             view.setY(height * (course.getStart()-1)); //设置开始高度,即第几节课开始
@@ -111,36 +133,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //保存数据到数据库
-    private void saveData(Course course) {
-        SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
-        sqLiteDatabase.execSQL("insert into course(course_name, teacher, class_room, day, start, end) " +
-                "values(?, ?, ?, ?, ?, ?)", new String[] {course.getCourseName(), course.getTeacher(),
-                course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
-    }
-
-    //从数据库加载数据
-    private void loadData() {
-        ArrayList<Course> courseList = new ArrayList<>(); //课程列表
-        SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
-        if (cursor.moveToFirst()) {
-            do {
-                courseList.add(new Course(
-                        cursor.getString(cursor.getColumnIndex("course_name")),
-                        cursor.getString(cursor.getColumnIndex("teacher")),
-                        cursor.getString(cursor.getColumnIndex("class_room")),
-                        cursor.getInt(cursor.getColumnIndex("day")),
-                        cursor.getInt(cursor.getColumnIndex("start")),
-                        cursor.getInt(cursor.getColumnIndex("end"))));
-            } while(cursor.moveToNext());
-        }
-        cursor.close();
-
-        //使用从数据库读取出来的课程信息来加载课程表视图
-        for (Course course : courseList) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == 0 && data != null) {
+            Course course = (Course) data.getSerializableExtra("course");
+            //创建课程表左边视图(节数)
             createLeftView(course);
+            //创建课程表视图
             createCourseView(course);
+            //存储数据到数据库
+            saveData(course);
         }
     }
 

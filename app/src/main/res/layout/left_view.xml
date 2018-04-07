@@ -2,15 +2,16 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="45dp"
-    android:layout_height="70dp"
-    android:background="#7fda">
+    android:layout_height="100dp"
+    android:background="#7fda"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/time_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:gravity="center"/>
 
     <TextView
         android:id="@+id/class_number_text"
@@ -19,16 +20,17 @@
         android:layout_centerInParent="true"
         android:gravity="center"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="#7fD5D5D5"/>
-
     <TextView
         android:id="@+id/time_end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#7fD5D5D5"
         android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>

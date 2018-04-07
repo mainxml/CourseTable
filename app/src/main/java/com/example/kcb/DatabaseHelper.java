@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table course(" +
+        db.execSQL("create table courses(" +
                 "id integer primary key autoincrement," +
                 "course_name text," +
                 "teacher text," +
