@@ -18,8 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "teacher text," +
                 "class_room text," +
                 "day integer," +
-                "start integer," +
-                "end integer)");
+                "class_start integer," +
+                "class_end integer)");
     }
 
     @Override

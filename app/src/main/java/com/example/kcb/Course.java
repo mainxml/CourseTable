@@ -9,16 +9,16 @@ public class Course implements Serializable {
     private String teacher;
     private String classRoom;
     private int day;
-    private int start;
-    private int end;
+    private int classStart;
+    private int classEnd;
 
-    public Course(String courseName, String teacher, String classRoom, int day, int start, int end) {
+    public Course(String courseName, String teacher, String classRoom, int day, int classStart, int classEnd) {
         this.courseName = courseName;
         this.teacher = teacher;
         this.classRoom = classRoom;
         this.day = day;
-        this.start = start;
-        this.end = end;
+        this.classStart = classStart;
+        this.classEnd = classEnd;
     }
 
     public String getCourseName() {
@@ -54,18 +54,18 @@ public class Course implements Serializable {
     }
 
     public int getStart() {
-        return start;
+        return classStart;
     }
 
-    public void setStart(int start) {
-        this.start = start;
+    public void setStart(int classStart) {
+        this.classEnd = classStart;
     }
 
     public int getEnd() {
-        return end;
+        return classEnd;
     }
 
-    public void setEnd(int end) {
-        this.end = end;
+    public void setEnd(int classEnd) {
+        this.classEnd = classEnd;
     }
 }

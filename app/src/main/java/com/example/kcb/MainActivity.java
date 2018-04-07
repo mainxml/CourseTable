@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             (this, "database.db", null, 1);
 
     int currentCoursesNumber = 0;
-    int maxCoursesNumber = 0; //课程的最大节数
+    int maxCoursesNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
                         cursor.getString(cursor.getColumnIndex("teacher")),
                         cursor.getString(cursor.getColumnIndex("class_room")),
                         cursor.getInt(cursor.getColumnIndex("day")),
-                        cursor.getInt(cursor.getColumnIndex("start")),
-                        cursor.getInt(cursor.getColumnIndex("end"))));
+                        cursor.getInt(cursor.getColumnIndex("class_start")),
+                        cursor.getInt(cursor.getColumnIndex("class_end"))));
             } while(cursor.moveToNext());
         }
         cursor.close();
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     //保存数据到数据库
     private void saveData(Course course) {
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
-        sqLiteDatabase.execSQL("insert into courses(course_name, teacher, class_room, day, start, end) " +
+        sqLiteDatabase.execSQL("insert into courses(course_name, teacher, class_room, day, class_start, class_end) " +
                 "values(?, ?, ?, ?, ?, ?)", new String[] {course.getCourseName(), course.getTeacher(),
                 course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
     }
@@ -85,21 +85,22 @@ public class MainActivity extends AppCompatActivity {
                 View view = LayoutInflater.from(this).inflate(R.layout.left_view, null);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110,180);
                 view.setLayoutParams(params);
+
                 TextView text = view.findViewById(R.id.class_number_text);
                 text.setText(String.valueOf(++currentCoursesNumber));
 
-                LinearLayout classNumberLayout = findViewById(R.id.class_number_layout);
-                classNumberLayout.addView(view);
+                LinearLayout leftViewLayout = findViewById(R.id.left_view_layout);
+                leftViewLayout.addView(view);
             }
-            maxCoursesNumber = len;
         }
+        maxCoursesNumber = len;
     }
 
     //创建课程视图
     private void createCourseView(final Course course) {
         int height = 180;
         int integer = course.getDay();
-        if ((integer < 1 && integer > 7) || course.getStart() > course.getEnd())
+        if ((integer < 1 || integer > 7) || course.getStart() > course.getEnd())
             Toast.makeText(this, "星期几没写对,或课程结束时间比开始时间还早~~", Toast.LENGTH_LONG).show();
         else {
             switch (integer) {
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     view.setVisibility(View.GONE);//先隐藏
                     day.removeView(view);//再移除课程视图
                     SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
-                    sqLiteDatabase.execSQL("delete from course where course_name = ?", new String[] {course.getCourseName()});
+                    sqLiteDatabase.execSQL("delete from courses where course_name = ?", new String[] {course.getCourseName()});
                     return true;
                 }
             });

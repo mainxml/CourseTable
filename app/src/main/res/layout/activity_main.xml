@@ -91,7 +91,7 @@
 
                 <!--左侧"节数"布局-->
                 <LinearLayout
-                    android:id="@+id/class_number_layout"
+                    android:id="@+id/left_view_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"/>
