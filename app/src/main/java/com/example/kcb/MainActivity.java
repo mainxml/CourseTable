@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //工具条
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //从数据库读取数据
@@ -46,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
 
     //从数据库加载数据
     private void loadData() {
-        ArrayList<Course> courseList = new ArrayList<>(); //课程列表
+        ArrayList<Course> coursesList = new ArrayList<>(); //课程列表
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("select * from courses", null);
         if (cursor.moveToFirst()) {
             do {
-                courseList.add(new Course(
+                coursesList.add(new Course(
                         cursor.getString(cursor.getColumnIndex("course_name")),
                         cursor.getString(cursor.getColumnIndex("teacher")),
                         cursor.getString(cursor.getColumnIndex("class_room")),
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
 
         //使用从数据库读取出来的课程信息来加载课程表视图
-        for (Course course : courseList) {
+        for (Course course : coursesList) {
             createLeftView(course);
             createCourseView(course);
         }
@@ -72,9 +71,15 @@ public class MainActivity extends AppCompatActivity {
     //保存数据到数据库
     private void saveData(Course course) {
         SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
-        sqLiteDatabase.execSQL("insert into courses(course_name, teacher, class_room, day, class_start, class_end) " +
-                "values(?, ?, ?, ?, ?, ?)", new String[] {course.getCourseName(), course.getTeacher(),
-                course.getClassRoom(), course.getDay()+"", course.getStart()+"", course.getEnd()+""});
+        sqLiteDatabase.execSQL
+                ("insert into courses(course_name, teacher, class_room, day, class_start, class_end) " + "values(?, ?, ?, ?, ?, ?)",
+                new String[] {course.getCourseName(),
+                        course.getTeacher(),
+                        course.getClassRoom(),
+                        course.getDay()+"",
+                        course.getStart()+"",
+                        course.getEnd()+""}
+                );
     }
 
     //创建课程节数视图
@@ -99,33 +104,33 @@ public class MainActivity extends AppCompatActivity {
     //创建课程视图
     private void createCourseView(final Course course) {
         int height = 180;
-        int integer = course.getDay();
-        if ((integer < 1 || integer > 7) || course.getStart() > course.getEnd())
+        int getDay = course.getDay();
+        if ((getDay < 1 || getDay > 7) || course.getStart() > course.getEnd())
             Toast.makeText(this, "星期几没写对,或课程结束时间比开始时间还早~~", Toast.LENGTH_LONG).show();
         else {
-            switch (integer) {
-                case 1: day = findViewById(R.id.monday);break;
-                case 2: day = findViewById(R.id.tuesday);break;
-                case 3: day = findViewById(R.id.wednesday);break;
-                case 4: day = findViewById(R.id.thursday);break;
-                case 5: day = findViewById(R.id.friday);break;
-                case 6: day = findViewById(R.id.saturday);break;
-                case 7: day = findViewById(R.id.weekday);break;
+            switch (getDay) {
+                case 1: day = findViewById(R.id.monday); break;
+                case 2: day = findViewById(R.id.tuesday); break;
+                case 3: day = findViewById(R.id.wednesday); break;
+                case 4: day = findViewById(R.id.thursday); break;
+                case 5: day = findViewById(R.id.friday); break;
+                case 6: day = findViewById(R.id.saturday); break;
+                case 7: day = findViewById(R.id.weekday); break;
             }
-            final View view = LayoutInflater.from(this).inflate(R.layout.course_card, null); //加载单个课程布局
-            view.setY(height * (course.getStart()-1)); //设置开始高度,即第几节课开始
+            final View v = LayoutInflater.from(this).inflate(R.layout.course_card, null); //加载单个课程布局
+            v.setY(height * (course.getStart()-1)); //设置开始高度,即第几节课开始
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
                     (ViewGroup.LayoutParams.MATCH_PARENT,(course.getEnd()-course.getStart()+1)*height - 8); //设置布局高度,即跨多少节课
-            view.setLayoutParams(params);
-            TextView text = view.findViewById(R.id.text_view);
+            v.setLayoutParams(params);
+            TextView text = v.findViewById(R.id.text_view);
             text.setText(course.getCourseName() + "\n" + course.getTeacher() + "\n" + course.getClassRoom()); //显示课程名
-            day.addView(view);
+            day.addView(v);
             //长按删除课程
-            view.setOnLongClickListener(new View.OnLongClickListener() {
+            v.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    view.setVisibility(View.GONE);//先隐藏
-                    day.removeView(view);//再移除课程视图
+                    v.setVisibility(View.GONE);//先隐藏
+                    day.removeView(v);//再移除课程视图
                     SQLiteDatabase sqLiteDatabase =  databaseHelper.getWritableDatabase();
                     sqLiteDatabase.execSQL("delete from courses where course_name = ?", new String[] {course.getCourseName()});
                     return true;

@@ -26,10 +26,11 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="?android:attr/actionBarSize"
                 android:background="#7fab96c5"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/AlertDialog.AppCompat.Light"/>
+
             <!--星期条-->
             <LinearLayout
                 android:layout_width="match_parent"

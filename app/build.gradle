@@ -7,8 +7,8 @@ android {
         applicationId "com.example.kcb"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.2"
+        versionCode 1
+        versionName "1.0"
     }
 }
 
