@@ -1,5 +1,6 @@
 package com.example.kcb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         //使用从数据库读取出来的课程信息来加载课程表视图
         for (Course course : coursesList) {
             createLeftView(course);
-            createCourseView(course);
+            createItemCourseView(course);
         }
     }
 
@@ -82,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
                 );
     }
 
-    //创建课程节数视图
+    //创建"第几节数"视图
     private void createLeftView(Course course) {
-        int len = course.getEnd();
-        if (len > maxCoursesNumber) {
-            for (int i = 0; i < len-maxCoursesNumber; i++) {
+        int endNumber = course.getEnd();
+        if (endNumber > maxCoursesNumber) {
+            for (int i = 0; i < endNumber-maxCoursesNumber; i++) {
                 View view = LayoutInflater.from(this).inflate(R.layout.left_view, null);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110,180);
                 view.setLayoutParams(params);
@@ -97,26 +98,29 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout leftViewLayout = findViewById(R.id.left_view_layout);
                 leftViewLayout.addView(view);
             }
+            maxCoursesNumber = endNumber;
         }
-        maxCoursesNumber = len;
     }
 
-    //创建课程视图
-    private void createCourseView(final Course course) {
-        int height = 180;
+    //创建单个课程视图
+    private void createItemCourseView(final Course course) {
         int getDay = course.getDay();
         if ((getDay < 1 || getDay > 7) || course.getStart() > course.getEnd())
             Toast.makeText(this, "星期几没写对,或课程结束时间比开始时间还早~~", Toast.LENGTH_LONG).show();
         else {
+            int dayId = 0;
             switch (getDay) {
-                case 1: day = findViewById(R.id.monday); break;
-                case 2: day = findViewById(R.id.tuesday); break;
-                case 3: day = findViewById(R.id.wednesday); break;
-                case 4: day = findViewById(R.id.thursday); break;
-                case 5: day = findViewById(R.id.friday); break;
-                case 6: day = findViewById(R.id.saturday); break;
-                case 7: day = findViewById(R.id.weekday); break;
+                case 1: dayId = R.id.monday; break;
+                case 2: dayId = R.id.tuesday; break;
+                case 3: dayId = R.id.wednesday; break;
+                case 4: dayId = R.id.thursday; break;
+                case 5: dayId = R.id.friday; break;
+                case 6: dayId = R.id.saturday; break;
+                case 7: dayId = R.id.weekday; break;
             }
+            day = findViewById(dayId);
+
+            int height = 180;
             final View v = LayoutInflater.from(this).inflate(R.layout.course_card, null); //加载单个课程布局
             v.setY(height * (course.getStart()-1)); //设置开始高度,即第几节课开始
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
@@ -140,19 +144,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0 && resultCode == 0 && data != null) {
-            Course course = (Course) data.getSerializableExtra("course");
-            //创建课程表左边视图(节数)
-            createLeftView(course);
-            //创建课程表视图
-            createCourseView(course);
-            //存储数据到数据库
-            saveData(course);
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
@@ -172,4 +163,18 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
+            Course course = (Course) data.getSerializableExtra("course");
+            //创建课程表左边视图(节数)
+            createLeftView(course);
+            //创建课程表视图
+            createItemCourseView(course);
+            //存储数据到数据库
+            saveData(course);
+        }
+    }
+
 }
